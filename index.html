@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="cs">
+    <head>
+        <title>ThreeDee</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="index.css"/>
+        <!-- Libs -->
+        <script src="js/libs/three.min.js"></script>
+        <script src="js/libs/FBXLoader.js"></script>
+        <script src="js/libs/OrbitControls.js"></script>
+        <script src="js/libs/FirstPersonControls.js"></script>
+        <script src="js/libs/inflate.min.js"></script><!-- Needed for loading -->
+        <!-- Classes -->
+        <script src="js/utils/ModelLoader.class.js"></script>
+        <script src="js/utils/ModelVisualizer.class.js"></script>
+        <script src="js/utils/Helper.class.js"></script>
+    </head>
+    <body>
+        <svg width="0" height="0">
+            <defs>
+                <!-- https://css-tricks.com/scale-svg/ -->
+                <!-- https://stackoverflow.com/questions/57465954/how-to-draw-curved-circle-arrow-by-using-html-svg-d3-js-javascript -->
+                <g id="loaderIcon"> 
+                    <path
+                        d="M 75 25 A 50 50, 0, 1, 1, 25 75"
+                        stroke="tomato"
+                        stroke-width="15"
+                        fill="transparent"
+                    />
+                    <line x1="30" y1="75" x2="5" y2="95" stroke="tomato"  stroke-width="15" />
+                    <line x1="25" y1="70" x2="55" y2="95" stroke="tomato"  stroke-width="15" />
+                </g>
+            </defs>
+        </svg>
+        <header>
+            <div id="logo">
+                <div cubeFace="x"></div>
+                <div cubeFace="y"></div>
+                <div cubeFace="z"></div>
+            </div>
+            <h3>DisplayIT</h3>
+        </header>
+        <main>
+            <nav id="content-nav">
+                <ul>
+                    <li id="visualizerOpt"  class="active"><a href='#/visualizer'>Model visualizer</a></li>
+                    <li id="fbxLoaderOpt"><a href='#/fbxLoader'>FBX loader</a></li>
+                    <li id="contactOpt"><a href='#/contact'>Contact</a></li>
+                </ul>
+            </nav>
+            <section class="main">
+                <!-- [Visualizer] -->
+                <article id="visualizer">
+                    <div class="render">
+                        <figure class="canvasContainer blur">
+                            <h2>Jestli vidíte tento text, tak Váš prohlížeč zřejmě nepodporuje WebGL (nebo nemáte povolený JavaScript)</h2>
+                        </figure>
+                        <div class="fpsCounter hidden">
+                            <p>0</p>
+                            <p>0</p>
+                        </div>
+                        <div class="loading hidden">
+                            <div class="spin">
+                                <!-- http://tutorials.jenkov.com/svg/use-element.html -->
+                                <svg viewBox="0 0 150 150">
+                                    <use xlink:href="#loaderIcon"></use>
+                                </svg>
+                            </div>
+                            <div progressBar></div>
+                        </div>
+                    </div>
+                    <div class="articleData">
+                        <h3>Press F for fullscreen</h3>
+                        <p>
+                            Tato záložka slouží k demonstraci základů knihovny THREE.js pomocí interaktivního příkladu.  Scéna obsahuje dynamicky načtený FBX model dohromady s RGBA texturou.
+                            Implementováno bylo také osvětlení včetně reflektoru (baterky) závislé na pozici a směru pohledu kamery. Ve scéně je možné se volně pohybovat pomocí kláves
+                            a rozhlížet se pomocí myši. <b>Pro interakci se scénou je nutné do scény kliknout myší</b>.
+                        </p>
+                            <h3>Controls <i>(Ovládání)</i></h3>
+                            <ul>
+                                <li>W - forward  <i>(Dopředu)</i></li>
+                                <li>S - backward <i>(Dozadu)</i></li>
+                                <li>A - left <i>(Doleva)</i></li>
+                                <li>D - right <i>(Doprava)</i></li>
+                                <li>Space - up <i>(Nahoru)</i></li>
+                                <li>L. Shift - down (Dolu)</li>
+                                <li>F - FullScreen <i>(Zapnutí fullscreen</i>)</li>
+                            </ul>
+                    </div>
+                </article>
+                <!-- [FBX loader] -->
+                <article id="fbxLoader" class="hidden">
+                    <div class="render">
+                        <figure class="canvasContainer blur">
+                            <h2>Jestli vidíte tento text, tak Váš prohlížeč zřejmě nepodporuje WebGL (nebo nemáte povolený JavaScript)</h2>
+                        </figure>
+                        <div class="fpsCounter hidden">
+                            <p>0</p>
+                            <p>0</p>
+                        </div>
+                        <div class="loading hidden">
+                            <div class="spin">
+                                <!-- http://tutorials.jenkov.com/svg/use-element.html -->
+                                <svg viewBox="0 0 150 150">
+                                    <use xlink:href="#loaderIcon"></use>
+                                </svg>
+                            </div>
+                            <div progressBar></div>
+                        </div>
+                    </div>
+                    <span style="height: 2em"></span>
+                    <div class="articleData">
+                        <form action="#">
+                            <fieldset>
+                                <label for="objectSrc">Model ve formátu .FBX</label>
+                                <input name="objectSrc" type="file">
+                                <h4>Přetáhněte sem...</h4>
+                            </fieldset>
+                            <fieldset>
+                                <label for="texturesSrc">Textury k modelu</label>
+                                <input name="texturesSrc" type="file" multiple>
+                                <h4>Přetáhněte sem...</h4>
+                            </fieldset>
+                        </form>
+                        <h3>Press F for fullscreen</h3>
+                        <p>
+                            Na této záložce se nachází aplikace pro vizualizaci FBX modelů. Modely jsou načítány přímo z pole <i>FILE</i>, tedy obsah není nahráván na server. 
+                            Obsah je ihned nahrán do paměti grafické karty, kde zůstane až do resfreshe stránky (mezitím je možné se přepínat mezi ostatními kartami aplikace).
+                        </p>
+                        <h3>Jak nahrávat modely</h3>
+                        <p>
+                            Modely je možné nahrát pomocí formuláře, který se nachází pod modrou vykreslovací obrazovkou. Model je možné nahrát buď pomocí
+                            formulářového tlačítka <i><u>vybrat soubor</u></i> (nebo pomocí tlačítka <i><u>zvolit soubory</u></i>). Také je možné modely nahrát přetažením souboru
+                            z file systému operačního systému (třeba z plochy obrazovky). Podporovány jsou pouze modely ve formátu <b>.FBX</b>.
+                        </p>
+                        <p>
+                            Vždy je nutné modely nahrávat jednotlivě (v případě, že chcete na modely aplikovat texturu..). Nejdříve nahrajte FBX soubor modelu, pak nahrajte texturu.
+                            Textura se vždy aplikuje na poslední nahraný model. Textury by měly být ve formátu <b>.png</b>.
+                        </p>
+                        <a href="https://gyazo.com/900edc2b23884310b9dacc8724851e89" style="align-self: center;"><img src="https://i.gyazo.com/900edc2b23884310b9dacc8724851e89.gif" alt="Image from Gyazo"/></a>
+                    </div>
+                </article>
+                <!-- [Contact] -->
+                <article id="contact" class="hidden">
+                    <div class="articleData">
+                        <h2 style='font-size: 3.0em'>Work in progress!</h2>
+                        <h4 style='font-size: 2.5em'>Email: <a href="mailto:schilpat@fel.cvut.cz">schilpat@fel.cvut.cz</a></h4>
+                        <h4 style='font-size: 2.5em'>Bakalářská Práce: <a href='http://psweb.mzf.cz/BP2/' target='_blank'>psweb.mzf.cz/BP2</a></h4>
+                        <span style="height: 2em"></span>
+                        <h3>Výčet implementovaných funkcionalit</h3>
+                        <ul>
+                            <li>Form data - načítání modelů FBX [DONE]</li>
+                            <li><ul>Dynamické načítání modelů
+                                <li>Pomocí dra&drop / fileAPI [DONE]</li>
+                                <li>Formulář, vstupní prvky pomocí pseudotříd [DONE]</li>
+                                <li>Nastavení základní pozice + úprava kódu [WIP]</li>
+                            </ul></li>
+                            <li>FullScreen API [DONE]</li>
+                            <li>Formulář[DONE / WIP]</li>
+                            <li>Multiplayer v modelu (WebSocket)[Nebude]</li>
+                            <li>CSS transform (3D) [DONE]</li>
+                            <li>CSS transition / animace [DONE]</li>
+                            <li>SVG [DONE]</li>
+                            <li>CSS animace k načítání modelů (animation-play-state) [DONE]</li>
+                            <li>Atributový filtr [Done]</li>
+                            <li>Offline API + applicationCache ?[Nebude]</li>
+                            <li>Classes [DONE]</li>
+                            <li>Promise [DONE]</li>
+                            <li>Historie pomocí hash # [DONE]</li>
+                            <li>Media query + responsivita [DONE]</li>
+                            <li>atd...</li>
+                        </ul>
+                    </div>
+                </article>
+            </section>
+        </main>
+        <footer>
+            <small copyright>
+                <p>© Patrik Schiller, 2020 </p><p>ČVUT FEL</p>
+            </small>
+        </footer>
+        <script src="js/index.js"></script>
+    </body>
+</html>
