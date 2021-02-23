@@ -8,3 +8,5 @@ Custom SPA which can be used as simple 3D engine (using THREE.js)
 - the application can display multiple 3D objects (complex scene), including their textures
 - simple spotlight was implemented
 - it can also display 3D models and textures loaded directly from DragAndDrop form (uploading to server directory is not necessary)
+
+- Page url: http://patrikschiller.com/KAJ/
